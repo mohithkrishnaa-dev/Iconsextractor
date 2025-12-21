@@ -3,7 +3,8 @@
 FF Icon Extractor is a lightweight, frontend-only tool for scanning, previewing, and downloading Free Fire icon assets using sequential item IDs.
 
 It is designed as a **utility tool**, not a consumer app — focused on correctness, clarity, and controlled behavior rather than flashy features.
-
+ 
+Url: https://mohithkrishnaa-dev.github.io/Iconsextractor/Index.html
 ---
 
 ## 🔧 What This Tool Does
