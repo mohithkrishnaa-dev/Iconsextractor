@@ -102,8 +102,9 @@ Planned only if a backend is introduced:
 
 ## ⚠️ Disclaimer
 
-This project is intended for **educational and personal use only**.  
-All game assets belong to their respective owners.
+All game icons and assets are the property of their respective owners (Garena).
+This project does not distribute or claim ownership of any game assets.
+Assets are loaded dynamically from public CDNs for educational and reference purposes only.
 
 ---
 
