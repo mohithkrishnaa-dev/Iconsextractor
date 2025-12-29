@@ -7,165 +7,110 @@
 
 <style>
 :root{
---bg:#050506;
---panel:#0b0d12;
---card:#131725;
---border:#1f2433;
---text:#e6e6e6;
---muted:#8c93b3;
---accent:#ffffff;
+--bg:#000;
+--card:#0b0b0b;
+--border:#1a1a1a;
+--text:#fff;
+--muted:#9a9a9a;
+--danger:#2b0000;
+--danger-border:#550000;
+}
+.footer{
+  padding:10px 0;
+  text-align:center;
+  font-size:11px;
+  color:#777;
+  border-top:1px solid #1a1a1a;
+  background:#000;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+background:var(--bg);
+color:var(--text);
+font-family:system-ui,-apple-system,Segoe UI;
 }
 
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:system-ui}
-
-/* Header */
+/* HEADER */
 header{
 padding:12px 14px;
+font-size:16px;
+font-weight:700;
 border-bottom:1px solid var(--border);
-font-weight:600;
 }
 
-/* Controls */
+/* CONTROLS */
 .controls{
-display:flex;
-gap:6px;
-flex-wrap:wrap;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:8px;
 padding:10px;
-background:var(--panel);
 border-bottom:1px solid var(--border);
 }
 
 .controls select,
-.controls input{
-padding:8px;
-border-radius:6px;
-background:#080a10;
+.controls button{
+padding:10px;
+border-radius:8px;
+background:#000;
 border:1px solid var(--border);
 color:var(--text);
-font-size:12px;
+font-size:13px;
 }
 
-.controls button{
-padding:8px 14px;
-border-radius:6px;
-border:none;
-background:var(--accent);
+.controls button.scan{
+background:#fff;
 color:#000;
 font-weight:600;
-font-size:12px;
-cursor:pointer;
 }
 
-/* Layout */
-.layout{
-display:grid;
-grid-template-columns:180px 1fr;
+.controls button.stop{
+background:var(--danger);
+color:#fff;
+border:1px solid var(--danger-border);
 }
-@media(max-width:900px){
-.layout{grid-template-columns:1fr}
-}
+.controls button.stop:hover{background:#3d0000}
 
-/* Side heading */
-.side{
-padding:12px;
-background:var(--panel);
-border-right:1px solid var(--border);
-}
-.side h2{
-font-size:16px;
-letter-spacing:.5px;
-}
-.side p{
-font-size:11px;
-color:var(--muted);
-margin-top:4px;
-}
+.controls button:disabled{opacity:.4}
 
-/* Status */
+/* SIDE HEADING */
+.side-heading{
+padding:10px 12px;
+border-bottom:1px solid var(--border);
+}
+.side-heading h2{font-size:15px;margin-bottom:2px}
+.side-heading p{font-size:12px;color:var(--muted)}
+
+/* STATUS */
 .status{
 padding:8px 12px;
 font-size:12px;
 color:var(--muted);
 border-bottom:1px solid var(--border);
-min-height:28px;
 }
 
-/* Grid */
+/* PROGRESS */
+.progress{display:none;height:2px;background:var(--border)}
+.progress.show{display:block}
+.bar{height:100%;width:0%;background:#fff}
+
+/* GRID */
 .grid{
 padding:10px;
 display:grid;
-grid-template-columns:repeat(auto-fill,minmax(100px,1fr));
-gap:8px;
+grid-template-columns:repeat(auto-fill,minmax(110px,1fr));
+gap:10px;
 }
 
+/* CARD */
 .card{
 background:var(--card);
-border-radius:8px;
-padding:6px;
-display:flex;
-flex-direction:column;
-align-items:center;
-gap:6px;
-}
-
-.card img{
-width:100%;
-height:70px;
-object-fit:contain;
-pointer-events:none;
-user-select:none;
-}
-
-.id{
-font-size:10px;
-color:var(--muted);
-}
-
-.actions{
-display:flex;
-gap:6px;
-width:100%;
-}
-
-.actions button{
-flex:1;
-padding:6px;
-border-radius:6px;
 border:1px solid var(--border);
-background:#080a10;
-color:var(--text);
-cursor:pointer;
-display:flex;
-align-items:center;
-justify-content:center;
-}
-
-/* Footer */
-footer{
+border-radius:6px;
 padding:8px;
 text-align:center;
-font-size:11px;
-color:var(--muted);
-border-top:1px solid var(--border);
 }
-
-/* Toast */
-.toast{
-position:fixed;
-bottom:20px;
-left:50%;
-transform:translateX(-50%);
-background:#111;
-color:#fff;
-padding:10px 14px;
-border-radius:8px;
-font-size:12px;
-opacity:0;
-pointer-events:none;
-transition:opacity .2s;
-}
-.toast.show{opacity:1}
+.card img{width:100%;height:70px;object-fit:contain}
+.id{margin-top:4px;font-size:11px;color:var(--muted)}
 </style>
 </head>
 
@@ -174,175 +119,207 @@ transition:opacity .2s;
 <header>FF Icon Extractor</header>
 
 <div class="controls">
-<select id="server">
-<option value="advance">ADV</option>
-<option value="live">LIVE</option>
-</select>
+  <select id="server">
+    <option value="advance">ADV</option>
+    <option value="live">LIVE</option>
+  </select>
 
-<select id="ob"></select>
-<select id="cat"></select>
+  <select id="ob"></select>
+  <select id="cat"></select>
 
-<input id="maxScan" type="number" value="200" style="width:80px">
-
-<button onclick="scan()">Scan</button>
+  <button class="scan" id="scanBtn">Scan</button>
+  <button class="stop" id="stopBtn">Stop</button>
+  <button onclick="clearGrid()">Clear</button>
 </div>
 
-<div class="layout">
-  <div class="side" id="sideInfo">
-    <h2>—</h2>
-    <p>—</p>
-  </div>
-
-  <div>
-    <div class="status" id="status"></div>
-    <div class="grid" id="grid"></div>
-  </div>
+<div class="side-heading" id="sideHeading">
+  <h2>Ready</h2>
+  <p>Select options and scan</p>
 </div>
 
-<footer>Made by MK🤍</footer>
-<div class="toast" id="toast"></div>
+<div class="status" id="status">Idle</div>
+<div class="progress" id="progress"><div class="bar"></div></div>
+<div class="grid" id="grid"></div>
 
 <script>
+/* CONFIG */
+const MISS_THRESHOLD = 40;
+let STOP = false;
+
 const BASE={
 advance:"https://dl.aw.freefiremobile.com/advance/ABHotUpdates/IconCDN/other/",
 live:"https://dl.aw.freefiremobile.com/live/ABHotUpdates/IconCDN/other/"
 };
 
+/* ALL ASSETS (FINAL – COMPLETE) */
 const CATEGORY={
-"Weapons":{type:"special",prefix:"9071"},
-"Collab Frames":{type:"special",prefix:"9260"},
-"Skywing":{type:"special",prefix:"9110"},
-"Bundle":{type:"normal",prefix:"7100"},
-"Face Paint":{type:"normal",prefix:"2140"},
-"Head Mask":{type:"normal",prefix:"2110"},
-"Tops":{type:"normal",prefix:"2030"},
-"Bottoms":{type:"normal",prefix:"2040"},
-"Shoes":{type:"normal",prefix:"2050"},
-"Backpack":{type:"normal",prefix:"9040"},
-"Avatar":{type:"normal",prefix:"9020"},
-"Banner":{type:"normal",prefix:"9010"},
-"Vehicle":{type:"normal",prefix:"9080"},
-"Surfboard":{type:"normal",prefix:"9060"},
-"Parachute":{type:"normal",prefix:"9050"},
-"Lobby Music":{type:"normal",prefix:"9130"},
-"Arrival Animation":{type:"normal",prefix:"9120"},
-"Emotes":{type:"normal",prefix:"9090"}
+
+/* OUTFITS */
+"Bundle":{patterns:[{type:"normal",prefix:"7100",start:1}]},
+"Tops":{patterns:[{type:"normal",prefix:"2030",start:1}]},
+"Bottoms":{patterns:[{type:"normal",prefix:"2040",start:1}]},
+"Shoes":{patterns:[{type:"normal",prefix:"2050",start:1}]},
+"Head Mask":{patterns:[{type:"normal",prefix:"2110",start:1}]},
+"Face Paint":{patterns:[{type:"normal",prefix:"2140",start:1}]},
+
+/* WEAPONS */
+"Weapons":{patterns:[{type:"special",prefix:"9071",start:1}]},
+"Collab Frame":{patterns:[{type:"special",prefix:"9260",start:1}]},
+"Skywing":{patterns:[{type:"special",prefix:"9110",start:1}]},
+
+/* PROFILE */
+"Avatar":{patterns:[{type:"normal",prefix:"9020",start:1}]},
+"Banner":{patterns:[{type:"normal",prefix:"9010",start:1}]},
+"Profile Pin":{
+  patterns:[
+    {type:"fixed",prefix:"910",suffix:6},
+    {type:"normal",prefix:"9100",start:1}
+  ]
+},
+"Battle Card":{patterns:[{type:"normal",prefix:"9250",start:1}]},
+
+/* EMOTES & EFFECTS */
+"Emotes":{patterns:[{type:"normal",prefix:"9090",start:1}]},
+"Super Emote":{patterns:[{type:"normal",prefix:"9095",start:1}]},
+"Final Shot":{
+  patterns:[
+    {type:"normal",prefix:"9230",start:1},
+    {type:"normal",prefix:"9230",start:2}
+  ]
+},
+
+/* VEHICLE & MOBILITY */
+"Vehicle":{patterns:[{type:"normal",prefix:"9080",start:1}]},
+"Surfboard":{patterns:[{type:"normal",prefix:"9060",start:1}]},
+"Parachute":{patterns:[{type:"normal",prefix:"9050",start:1}]},
+"Arrival Animation":{patterns:[{type:"normal",prefix:"9120",start:1}]},
+
+/* AUDIO */
+"Lobby Music":{patterns:[{type:"normal",prefix:"9130",start:1}]},
+
+/* INVENTORY */
+"Backpack":{patterns:[{type:"normal",prefix:"9040",start:1}]},
+
+/* TOKENS */
+"Token":{patterns:[{type:"normal",prefix:"8010",start:1}]},
+"Exchange Token":{patterns:[{type:"normal",prefix:"8010",start:501}]},
+
+/* PET */
+"Pet":{patterns:[{type:"fixed",prefix:"1300",suffix:6}]},
+"Pet Skill":{patterns:[{type:"fixed",prefix:"1315",suffix:6}]},
+"Pet Skin":{patterns:[{type:"fixed",prefix:"1310",suffix:6}]},
+"Pet Emote":{patterns:[{type:"fixed",prefix:"1309",suffix:6}]},
+
+/* CHARACTERS */
+"Characters":{
+  patterns:[
+    {type:"fixed",prefix:"101",suffix:6},
+    {type:"fixed",prefix:"102",suffix:6}
+  ]
+},
+
+/* CRATES */
+"Loot Box":{patterns:[{type:"normal",prefix:"9030",start:1}]},
+"Choice Crate":{patterns:[{type:"normal",prefix:"1700",start:1}]},
+"Loot Crate":{patterns:[{type:"normal",prefix:"4000",start:1}]},
+
+/* MISC */
+"Hyper Book":{patterns:[{type:"fixed",prefix:"18034",suffix:5}]},
+"Look Changer":{patterns:[{type:"normal",prefix:"9140",start:1}]},
+"Skill Skin":{patterns:[{type:"normal",prefix:"9220",start:1}]}
 };
 
-for(let i=40;i<=60;i++) ob.innerHTML+=`<option value="${i}">OB${i}</option>`;
-ob.value=52;
+/* INIT */
+const ob=document.getElementById("ob");
+const cat=document.getElementById("cat");
+const grid=document.getElementById("grid");
+const status=document.getElementById("status");
+const progress=document.getElementById("progress");
+const bar=document.querySelector(".bar");
+const scanBtn=document.getElementById("scanBtn");
+const stopBtn=document.getElementById("stopBtn");
+const sideHeading=document.getElementById("sideHeading");
+
+for(let i=40;i<=60;i++) ob.innerHTML+=`<option value="${i}">OB ${i}</option>`;
+ob.value=50;
 Object.keys(CATEGORY).forEach(c=>cat.innerHTML+=`<option>${c}</option>`);
 
-const FAIL_LIMIT=6;
-const toast=document.getElementById("toast");
-
-function showToast(msg){
-toast.textContent=msg;
-toast.classList.add("show");
-setTimeout(()=>toast.classList.remove("show"),2500);
-}
-
-async function scan(){
+function clearGrid(){
+STOP=true;
 grid.innerHTML="";
-status.textContent="Scanning…";
-
-sideInfo.innerHTML=
-`<h2>${cat.value.toUpperCase()}</h2>
-<p>OB${ob.value} • ${server.value.toUpperCase()}</p>`;
-
-const cfg=CATEGORY[cat.value];
-const obv=ob.value;
-const srv=BASE[server.value];
-const max=maxScan.value;
-
-let found=0,fails=0;
-
-for(let i=1;i<=max;i++){
-const id = cfg.type==="special"
-? cfg.prefix+"0"+obv+String(i).padStart(2,"0")
-: cfg.prefix+obv+String(i).padStart(3,"0");
-
-const url=srv+id+".png";
-const ok=await probe(url);
-
-if(!ok){
-fails++;
-if(fails>=FAIL_LIMIT) break;
-continue;
+status.textContent="Idle";
+progress.classList.remove("show");
+sideHeading.innerHTML="<h2>Ready</h2><p>Select options and scan</p>";
 }
 
-fails=0;
-found++;
-addCard(id,url);
-}
+stopBtn.onclick=()=>{
+STOP=true;
+status.textContent=status.textContent.startsWith("Found")
+  ? status.textContent.replace(" • running","").replace("Found","Stopped • Found")
+  : "Stopped";
+};
 
-status.textContent=
-`${cat.value.toUpperCase()} • OB${obv} • ${server.value.toUpperCase()} • Found ${found}`;
+function genId(p,ob,i){
+if(p.type==="fixed") return p.prefix+String(i).padStart(p.suffix,"0");
+if(p.type==="special") return p.prefix+"0"+ob+String(i).padStart(2,"0");
+return p.prefix+ob+String(i).padStart(3,"0");
 }
 
 function probe(url){
-return new Promise(res=>{
+return new Promise(r=>{
 const img=new Image();
-img.onload=()=>res(true);
-img.onerror=()=>res(false);
+img.onload=()=>r(true);
+img.onerror=()=>r(false);
 img.src=url;
 });
 }
 
-/* 🔒 SECURE-ONLY DOWNLOAD */
-async function secureDownload(url,id){
-try{
-const r=await fetch(url,{mode:"cors"});
-if(!r.ok) throw new Error();
-const b=await r.blob();
-const o=URL.createObjectURL(b);
-const a=document.createElement("a");
-a.href=o;
-a.download=id+".png";
-a.click();
-URL.revokeObjectURL(o);
-}catch{
-showToast("Download not supported on this browser");
+async function scan(){
+STOP=false;
+scanBtn.disabled=true;
+grid.innerHTML="";
+progress.classList.add("show");
+bar.style.width="0%";
+
+const cfg=CATEGORY[cat.value];
+const obv=ob.value;
+const srv=BASE[server.value];
+
+sideHeading.innerHTML=`<h2>${cat.value}</h2><p>${server.value.toUpperCase()} • OB ${obv}</p>`;
+
+let found=0,done=0;
+status.textContent="Found 0 • running";
+
+for(const p of cfg.patterns){
+let i=p.start||1,misses=0;
+while(misses<MISS_THRESHOLD && !STOP){
+const id=genId(p,obv,i++);
+const url=srv+id+".png";
+const ok=await probe(url);
+done++;
+bar.style.width=(done/(done+MISS_THRESHOLD))*100+"%";
+if(ok){
+grid.innerHTML+=`<div class="card"><img src="${url}"><div class="id">${id}</div></div>`;
+found++;
+status.textContent=`Found ${found} • running`;
+misses=0;
+}else misses++;
 }
 }
 
-function copyID(text){
-const t=document.createElement("input");
-t.value=text;
-document.body.appendChild(t);
-t.select();
-document.execCommand("copy");
-document.body.removeChild(t);
-showToast("ID copied");
+status.textContent=STOP
+  ? `Stopped • Found ${found}`
+  : `Found ${found} • stopped after ${MISS_THRESHOLD} misses`;
+
+progress.classList.remove("show");
+scanBtn.disabled=false;
 }
 
-function addCard(id,url){
-const c=document.createElement("div");
-c.className="card";
-
-const img=document.createElement("img");
-img.src=url;
-
-const idDiv=document.createElement("div");
-idDiv.className="id";
-idDiv.textContent=id;
-
-const actions=document.createElement("div");
-actions.className="actions";
-
-const dl=document.createElement("button");
-dl.innerHTML=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 21h14"/></svg>`;
-dl.onclick=()=>secureDownload(url,id);
-
-const copy=document.createElement("button");
-copy.innerHTML=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13"/><rect x="2" y="2" width="13" height="13"/></svg>`;
-copy.onclick=()=>copyID(id);
-
-actions.append(dl,copy);
-c.append(img,idDiv,actions);
-grid.appendChild(c);
-}
+scanBtn.onclick=scan;
 </script>
+<footer class="footer">
+  <span>Made by MK🤍</span>
+</footer>
 
 </body>
-  </html>
+</html>
