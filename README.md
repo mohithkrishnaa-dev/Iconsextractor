@@ -4,7 +4,7 @@ FF Icon Extractor is a lightweight, frontend-only tool for scanning, previewing,
 
 It is designed as a **utility tool**, not a consumer app — focused on correctness, clarity, and controlled behavior rather than flashy features.
  
-Url: https://mohithkrishnaa-dev.github.io/Iconsextractor/Index.html
+Url: https://mohithkrishnaa-dev.github.io/Iconsextractor/
 ---
 
 ## 🔧 What This Tool Does
@@ -118,3 +118,10 @@ Assets are loaded dynamically from public CDNs for educational and reference pur
 
 **v1 — Frontend Complete**  
 Feature-frozen until a backend is added.
+**v2 — Frontend Complete (Pattern-Based Scanning)
+Asset scanning is pattern-based (supports multiple ID formats per category)
+OB-aware logic implemented
+Manual stop control added
+UI and feature set finalized
+No further frontend features planned
+The project is feature-frozen until a backend is introduced
